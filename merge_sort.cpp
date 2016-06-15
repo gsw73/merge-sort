@@ -50,24 +50,14 @@ unsigned int *merge_sort( unsigned int *el, unsigned int numberOfElements ) {
     unsigned int doneB = 0;
 
     for ( unsigned int i = 0; i < numberOfElements; i++ ) {
-        if ( !doneA && !doneB ) {
-            if ( *tmpA_p < *tmpB_p ) {
-                sorted_p[ i ] = *tmpA_p++;
-                tmpAUsed++;
-                if ( tmpAUsed == lenA ) doneA = 1;
-            } else {
-                sorted_p[ i ] = *tmpB_p++;
-                tmpBUsed++;
-                if ( tmpBUsed == lenB ) doneB = 1;
-            }
-        } else if ( doneA && !doneB ) {
-            sorted_p[ i ] = *tmpB_p++;
-            tmpBUsed++;
-            if ( tmpBUsed == lenB ) doneB = 1;
-        } else if ( !doneA && doneB ) {
+        if ( ( !doneA && *tmpA_p < *tmpB_p ) || doneB ) {
             sorted_p[ i ] = *tmpA_p++;
             tmpAUsed++;
             if ( tmpAUsed == lenA ) doneA = 1;
+        } else {
+            sorted_p[ i ] = *tmpB_p++;
+            tmpBUsed++;
+            if ( tmpBUsed == lenB ) doneB = 1;
         }
     }
 
@@ -104,6 +94,12 @@ int main() {
     
     arrayPrint( elementsC, 5 );
     arrayPrint( sorted_p, 5 );
+
+    unsigned int elementsD[] = { 23, 27, 82, 69, 1, 4, 2, 100, 1023, 1000, 83, 41, 14, 19, 37, 18, 8 };
+    unsigned int elementsInD = sizeof( elementsD ) / sizeof( unsigned int );
+    sorted_p = merge_sort( elementsD, elementsInD );
+    arrayPrint( elementsD, elementsInD );
+    arrayPrint( sorted_p, elementsInD );
     
     return( 0 );
 }
