@@ -1,3 +1,5 @@
+import sys
+
 def merge_sort( el ):
 
     # break array into two pieces
@@ -22,8 +24,6 @@ def merge_sort( el ):
     sorted_el = []
     doneA = 0
     doneB = 0
-    usedA = 0
-    usedB = 0
 
     # get iterators for each sub list
     iterA = iter( sortedA )
@@ -35,38 +35,32 @@ def merge_sort( el ):
 
     # the sorted list must be as long as the original
     for i in range( len( el ) ):
-        if not doneA and not doneB:
-            if itemA < itemB:
-                sorted_el.append( itemA )
-                usedA += 1
-                doneA = usedA == lenA
-                if not doneA:
-                    itemA = next( iterA )
-
-            else:
-                sorted_el.append( itemB )
-                usedB += 1
-                doneB = usedB == lenB
-                if not doneB:
-                    itemB = next( iterB )
-
-        elif doneA and not doneB:
-            sorted_el.append( itemB )
-            usedB += 1
-            doneB = usedB == lenB
-            if not doneB:
-                itemB = next( iterB )
-
-        elif not doneA and doneB:
+        if ( not doneA and itemA < itemB ) or doneB:
             sorted_el.append( itemA )
-            usedA += 1
-            doneA = usedA == lenA
-            if not doneA:
+            try:
                 itemA = next( iterA )
+            except StopIteration:
+                doneA = 1
+        else:
+            sorted_el.append( itemB )
+            try:
+                itemB = next( iterB )
+            except StopIteration:
+                doneB = 1
 
     return sorted_el
 
 def main():
+    if len( sys.argv ) > 1:
+        elements = [ int( x ) for x in sys.argv[ 1: ] ]
+        sorted_elements = merge_sort( elements )
+
+        print( elements )
+        print( sorted_elements )
+
+        return
+
+    # if no command line arguments
     elementsA = [ 87, 16, 2, 0, 12, 25, 26, 27, 63, 75, 28, 50, 2, 5, 41, 39 ]
     sortedA = merge_sort( elementsA )
 
