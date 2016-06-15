@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Merge Sort</title>
+
+<style>
+
+div#answer { display: none; }
+#numberList { width: 75% }
+#nums {
+    color: cadetblue;
+    font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<form id="user-input">
+    <fieldset>
+        <legend>Merge Sort With JavaScript</legend>
+        <h3>Enter a list of numbers separated by spaces:</h3>
+        <input type="text" name="numberList" id="numberList">
+        <input type="submit" value="Submit">
+
+        <div id="answer">
+            <h3>Answer</h3>
+            <div id="answer-internal">
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $( document ).ready( function() {
+        "use strict";
+
+        function merge_sort( unsortedNumberList ) {
+            var sortedA;
+            var sortedB;
+            var sortedNumberList = [];
+            var doneA = 0;
+            var doneB = 0;
+            var itemA;
+            var itemB;
+
+            var lenA = Math.floor( unsortedNumberList.length / 2 );
+            var lenB = Math.ceil( unsortedNumberList.length / 2 );
+
+            var unsortedA = unsortedNumberList.slice( 0, lenA );
+            var unsortedB = unsortedNumberList.slice( lenA );
+
+            if ( lenA == 1 ) {
+                sortedA = Array.from( unsortedA );
+            } else {
+                sortedA = merge_sort( unsortedA );
+            }
+
+            if ( lenB == 1 ) {
+                sortedB = Array.from( unsortedB );
+            } else {
+                sortedB = merge_sort( unsortedB );
+            }
+
+            // start off... at least one item
+            itemA = sortedA.shift();
+            itemB = sortedB.shift();
+
+            for ( var i = 0; i < unsortedNumberList.length; i++ ) {
+                if ( ( !doneA && itemA < itemB ) || doneB ) {
+                    sortedNumberList.push( itemA );
+                    itemA = sortedA.shift();
+                    if ( itemA == undefined ) doneA = 1;
+                } else {
+                    sortedNumberList.push( itemB );
+                    itemB = sortedB.shift();
+                    if ( itemB == undefined ) doneB = 1;
+                }
+            }
+            return sortedNumberList;
+        }
+
+        $( "#user-input" ).on( "submit", function( envObj ) {
+            envObj.preventDefault();
+
+            // get numbers as string
+            var $form = $(this);
+            var numbersAsString = $( "#numberList" ).val();
+
+            // convert to array
+            var numbersAsStringArray = numbersAsString.split( /\s+/ );
+
+            // convert elements to int
+            var unsortedNumbers = numbersAsStringArray.map( Number );
+
+            // pass to sort algorithm
+            var sortedNumbers = merge_sort( unsortedNumbers );
+
+            // convert sorted array back to string
+            var sortedNumbersAsString = sortedNumbers.join( " " );
+
+            var $p_ans_text = $( "<p></p>" ).append( "The numbers in sorted order are:" );
+            var $p_ans_nums = $( "<p></p>" ).append( sortedNumbersAsString ).attr( "id", "nums" );
+
+            $form.find( "#answer-internal" ).empty();
+            $form.find( "#answer-internal" ).append( $p_ans_text ).append( $p_ans_nums );
+            $form.find( "#answer" ).show();
+
+            return;
+        });
+    });
+
+</script>
+
+</body>
+</html>
+
