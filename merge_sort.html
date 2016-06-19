@@ -11,7 +11,7 @@
 
 div#answer { display: none; }
 #numberList { width: 75% }
-#nums {
+#nums, #invs {
     color: cadetblue;
     font-weight: bold;
 }
@@ -41,6 +41,7 @@ div#answer { display: none; }
 <script>
     $( document ).ready( function() {
         "use strict";
+        var inversions = 0;
 
         function merge_sort( unsortedNumberList ) {
             var sortedA;
@@ -72,14 +73,17 @@ div#answer { display: none; }
             // start off... at least one item
             itemA = sortedA.shift();
             itemB = sortedB.shift();
+            var itemsRemainingInA = lenA;
 
             for ( var i = 0; i < unsortedNumberList.length; i++ ) {
                 if ( ( !doneA && itemA < itemB ) || doneB ) {
                     sortedNumberList.push( itemA );
+                    itemsRemainingInA--;
                     itemA = sortedA.shift();
                     if ( itemA == undefined ) doneA = 1;
                 } else {
                     sortedNumberList.push( itemB );
+                    inversions += itemsRemainingInA;
                     itemB = sortedB.shift();
                     if ( itemB == undefined ) doneB = 1;
                 }
@@ -92,7 +96,8 @@ div#answer { display: none; }
 
             // get numbers as string
             var $form = $(this);
-            var numbersAsString = $( "#numberList" ).val();
+            var numbersAsStringA = $( "#numberList" ).val();
+            var numbersAsString = numbersAsStringA.replace ( /\s*$/, "" );
 
             // convert to array
             var numbersAsStringArray = numbersAsString.split( /\s+/ );
@@ -101,6 +106,7 @@ div#answer { display: none; }
             var unsortedNumbers = numbersAsStringArray.map( Number );
 
             // pass to sort algorithm
+            inversions = 0;
             var sortedNumbers = merge_sort( unsortedNumbers );
 
             // convert sorted array back to string
@@ -108,9 +114,11 @@ div#answer { display: none; }
 
             var $p_ans_text = $( "<p></p>" ).append( "The numbers in sorted order are:" );
             var $p_ans_nums = $( "<p></p>" ).append( sortedNumbersAsString ).attr( "id", "nums" );
+            var $s_inversions = $( "<span></span>" ).append( inversions ).attr( "id", "invs" );
+            var $p_inversions = $( "<p></p>" ).append( "Inversions:  " ).append( $s_inversions );
 
             $form.find( "#answer-internal" ).empty();
-            $form.find( "#answer-internal" ).append( $p_ans_text ).append( $p_ans_nums );
+            $form.find( "#answer-internal" ).append( $p_ans_text ).append( $p_ans_nums ).append( $p_inversions );
             $form.find( "#answer" ).show();
 
             return;

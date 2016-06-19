@@ -5,6 +5,8 @@
 
 using namespace std;
 
+static unsigned long inversions = 0;
+
 // scrambled array as input; returns sorted array
 unsigned int *merge_sort( unsigned int *el, unsigned int numberOfElements ) {
     
@@ -48,15 +50,18 @@ unsigned int *merge_sort( unsigned int *el, unsigned int numberOfElements ) {
     unsigned int tmpBUsed = 0;
     unsigned int doneA = 0;
     unsigned int doneB = 0;
+    unsigned int itemsRemainingInA = lenA;
 
     for ( unsigned int i = 0; i < numberOfElements; i++ ) {
         if ( ( !doneA && *tmpA_p < *tmpB_p ) || doneB ) {
             sorted_p[ i ] = *tmpA_p++;
             tmpAUsed++;
+            itemsRemainingInA--;
             if ( tmpAUsed == lenA ) doneA = 1;
         } else {
             sorted_p[ i ] = *tmpB_p++;
             tmpBUsed++;
+            inversions += itemsRemainingInA;
             if ( tmpBUsed == lenB ) doneB = 1;
         }
     }
@@ -77,29 +82,47 @@ void arrayPrint( unsigned int* array_p, unsigned int len ) {
 }
 
 int main() {
+    inversions = 0;
     unsigned int elements[ 16 ] = { 87, 16, 2, 0, 12, 25, 26, 27, 63, 75, 28, 50, 2, 5, 41, 39 };
     unsigned int *sorted_p = merge_sort( elements, 16 );
 
     arrayPrint( elements, 16 );
     arrayPrint( sorted_p, 16 );
+    printf( "Number of inversions:  %ld\n", inversions );
     
+    inversions = 0;
     unsigned int elementsB[ 16 ] = { 98, 97, 96, 90, 73, 72, 71, 70, 43, 42, 41, 40, 25, 24, 23, 22 };
     sorted_p = merge_sort( elementsB, 16 );
 
     arrayPrint( elementsB, 16 );
     arrayPrint( sorted_p, 16 );
+    printf( "Number of inversions:  %ld\n", inversions );
     
+    inversions = 0;
     unsigned int elementsC[ 5 ] = { 5, 4, 3, 2, 1 };
     sorted_p = merge_sort( elementsC, 5 );
     
     arrayPrint( elementsC, 5 );
     arrayPrint( sorted_p, 5 );
+    printf( "Number of inversions:  %ld\n", inversions );
 
+    inversions = 0;
+    unsigned int elementsE[] = { 6, 5, 4, 3, 2, 1 };
+    unsigned int elementsInE = sizeof( elementsE ) / sizeof( unsigned int );
+    sorted_p = merge_sort( elementsE, elementsInE );
+
+    arrayPrint( elementsE, elementsInE );
+    arrayPrint( sorted_p, elementsInE );
+    printf( "Number of inversions:  %ld\n", inversions );
+
+    inversions = 0;
     unsigned int elementsD[] = { 23, 27, 82, 69, 1, 4, 2, 100, 1023, 1000, 83, 41, 14, 19, 37, 18, 8 };
     unsigned int elementsInD = sizeof( elementsD ) / sizeof( unsigned int );
     sorted_p = merge_sort( elementsD, elementsInD );
+
     arrayPrint( elementsD, elementsInD );
     arrayPrint( sorted_p, elementsInD );
+    printf( "Number of inversions:  %ld\n", inversions );
     
     return( 0 );
 }
